@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  redis:
+    image: redislabs/redismod
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  cloudproject:
+    build:
+      context: cloudproject
+    ports:
+      - "5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - redis
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - cloudproject
+    ports:
+      - "80:80"
